@@ -26,9 +26,44 @@ Le pont trouve seul le port et le jeton d'accès, dans le même fichier que la l
 
 ## Configurer l'assistant
 
+Choisissez votre assistant, copiez le bloc et collez-le à l'endroit indiqué dans l'onglet.
+
+<Tabs>
+  <Tab title="Claude Desktop">
+    ```json
+    {"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    À coller dans `claude_desktop_config.json`. Pour l'ouvrir : **Settings**, **Developer**, **Edit Config** (Réglages, Développeur, Modifier la config si Claude est en français). Le fichier se trouve dans `%APPDATA%\Claude\` sous Windows et dans `~/Library/Application Support/Claude/` sous macOS. Si le fichier contient déjà un objet `mcpServers`, ajoutez-y seulement l'entrée `helix`. Quittez complètement Claude Desktop, puis relancez-le.
+  </Tab>
+  <Tab title="Claude Code">
+    ```sh
+    claude mcp add --transport stdio helix -- helix-cli mcp
+    ```
+
+    À lancer dans un terminal, depuis le dossier de votre projet. Par défaut, le serveur n'est disponible que pour vous, dans ce projet. Ajoutez `--scope user` après `claude mcp add` pour l'avoir dans tous vos projets, ou `--scope project` pour écrire un fichier `.mcp.json` partagé avec votre équipe. Vérifiez avec `claude mcp get helix`, ou `/mcp` dans Claude Code.
+  </Tab>
+  <Tab title="Cursor">
+    ```json
+    {"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    À coller dans `~/.cursor/mcp.json` pour avoir le serveur dans tous vos projets, ou dans `.cursor/mcp.json` à la racine d'un projet pour le limiter à ce projet. Si le fichier contient déjà un objet `mcpServers`, ajoutez-y seulement l'entrée `helix`.
+  </Tab>
+  <Tab title="VS Code">
+    ```json
+    {"servers":{"helix":{"type":"stdio","command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    À coller dans `.vscode/mcp.json`, à la racine de l'espace de travail. Pour l'ouvrir : **Palette de commandes**, **MCP: Open Workspace Folder MCP Configuration**. Pour tous vos espaces de travail, utilisez plutôt **MCP: Open User Configuration**. VS Code nomme la clé de premier niveau `servers` et demande `type` : ce bloc n'est donc pas le même que les autres.
+  </Tab>
+</Tabs>
+
+Vous pouvez aussi copier la configuration depuis l'application et la coller dans tout autre assistant qui lit `mcpServers` :
+
 <Steps>
   <Step title="Copier la configuration depuis les Réglages">
-    Dans le Flight Planner, ouvrez les **Réglages**, puis la section **Serveur**. Dans la carte **Serveur MCP (agent IA)**, sur la ligne **Accès**, cliquez sur **Copier la config IA**. Le message **Configuration MCP copiée.** confirme la copie.
+    Dans le Flight Planner, ouvrez les **Réglages**, puis la section **Serveur**. Dans la carte **Serveur MCP (agent IA)**, sur la ligne **Assistants IA (MCP)**, cliquez sur **Copier la config IA**. Le bouton affiche **Copié ✓**.
   </Step>
   <Step title="La coller dans votre assistant">
     Collez le texte dans la configuration des serveurs MCP de votre assistant, à l'endroit que sa documentation indique.
@@ -37,12 +72,6 @@ Le pont trouve seul le port et le jeton d'accès, dans le même fichier que la l
     Relancez l'assistant s'il le demande. Le serveur `helix` apparaît avec ses outils.
   </Step>
 </Steps>
-
-Le texte copié est la configuration suivante. Vous pouvez aussi la saisir vous-même :
-
-```json
-{"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
-```
 
 - `helix` est le nom sous lequel l'assistant liste le serveur.
 - `command` et `args` lancent `helix-cli mcp`.
@@ -56,7 +85,8 @@ Si l'assistant indique qu'il ne peut pas lancer `helix-cli`, mettez le chemin co
 La carte **Serveur MCP (agent IA)** se trouve dans **Réglages**, section **Serveur**. Elle affiche :
 
 - **État** : **Actif** (avec l'adresse locale et le nombre de requêtes), **Arrêté**, **Arrêté dans les Réglages**, **Add-on MCP ou CLI requis**, ou **Erreur** avec son code. Le bouton **Démarrer** ou **Arrêter** et le bouton **Relancer** agissent sur le serveur.
-- **Accès** : `MCP ✓ · CLI ✓` selon votre licence, et le bouton **Copier la config IA**.
+- **Assistants IA (MCP)** : le bouton **Copier la config IA**. Une fois cliqué, il affiche **Copié ✓**.
+- **Scripts (CLI)** : le bouton **Doc**, qui ouvre la documentation de la ligne de commande.
 
 La note sous **État** rappelle que le serveur démarre avec l'application, en local uniquement (127.0.0.1).
 

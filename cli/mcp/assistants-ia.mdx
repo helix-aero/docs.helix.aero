@@ -26,9 +26,44 @@ The bridge finds the port and the access token by itself, in the same file as th
 
 ## Configure the assistant
 
+Choose your assistant, copy the block, and paste it where the tab says.
+
+<Tabs>
+  <Tab title="Claude Desktop">
+    ```json
+    {"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    Paste it into `claude_desktop_config.json`. To open it: **Settings**, **Developer**, **Edit Config**. The file is in `%APPDATA%\Claude\` on Windows and in `~/Library/Application Support/Claude/` on macOS. If the file already has an `mcpServers` object, add only the `helix` entry to it. Quit Claude Desktop completely and start it again.
+  </Tab>
+  <Tab title="Claude Code">
+    ```sh
+    claude mcp add --transport stdio helix -- helix-cli mcp
+    ```
+
+    Run this command in a terminal, from your project folder. By default the server is available only to you, in that project. Add `--scope user` after `claude mcp add` to have it in all your projects, or `--scope project` to write a `.mcp.json` file shared with your team. Check with `claude mcp get helix`, or `/mcp` inside Claude Code.
+  </Tab>
+  <Tab title="Cursor">
+    ```json
+    {"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    Paste it into `~/.cursor/mcp.json` to have the server in all your projects, or into `.cursor/mcp.json` at the root of a project to limit it to that project. If the file already has an `mcpServers` object, add only the `helix` entry to it.
+  </Tab>
+  <Tab title="VS Code">
+    ```json
+    {"servers":{"helix":{"type":"stdio","command":"helix-cli","args":["mcp"]}}}
+    ```
+
+    Paste it into `.vscode/mcp.json` at the root of the workspace. To open it: **Command Palette**, **MCP: Open Workspace Folder MCP Configuration**. For all your workspaces, use **MCP: Open User Configuration** instead. VS Code names the top-level key `servers` and asks for `type`: this block is therefore not the same as the others.
+  </Tab>
+</Tabs>
+
+You can also copy the configuration from the application and paste it into any other assistant that reads `mcpServers`:
+
 <Steps>
   <Step title="Copy the configuration from the Settings">
-    In Flight Planner, open the **Settings**, then the **Server** section. In the **MCP server (AI agent)** card, on the **Access** row, click **Copy AI config**. The message **MCP configuration copied.** confirms the copy.
+    In Flight Planner, open the **Settings**, then the **Server** section. In the **MCP server (AI agent)** card, on the **AI assistants (MCP)** row, click **Copy AI config**. The button shows **Copied ✓**.
   </Step>
   <Step title="Paste it into your assistant">
     Paste the text into the MCP servers configuration of your assistant, in the place its documentation indicates.
@@ -37,12 +72,6 @@ The bridge finds the port and the access token by itself, in the same file as th
     Restart the assistant if it asks for it. The `helix` server appears with its tools.
   </Step>
 </Steps>
-
-The copied text is the following configuration. You can also type it yourself:
-
-```json
-{"mcpServers":{"helix":{"command":"helix-cli","args":["mcp"]}}}
-```
 
 - `helix` is the name under which the assistant lists the server.
 - `command` and `args` start `helix-cli mcp`.
@@ -56,7 +85,8 @@ If the assistant says it cannot start `helix-cli`, put the full path of the comm
 The **MCP server (AI agent)** card is in **Settings**, **Server** section. It shows:
 
 - **Status**: **Running** (with the local address and the number of requests), **Stopped**, **Stopped in Settings**, **MCP or CLI add-on required**, or **Error** with its code. The **Start** or **Stop** button and the **Restart** button act on the server.
-- **Access**: `MCP ✓ · CLI ✓` according to your license, and the **Copy AI config** button.
+- **AI assistants (MCP)**: the **Copy AI config** button. Once clicked, it shows **Copied ✓**.
+- **Scripts (CLI)**: the **Doc** button, which opens the documentation of the command line.
 
 The note under **Status** reminds you that the server starts with the application, on the local machine only (127.0.0.1).
 
